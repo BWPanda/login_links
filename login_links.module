@@ -1,0 +1,55 @@
+<?php
+/**
+ * @file
+ * Displays a login link for each user on your site.
+ */
+
+/**
+ * Implements hook_permission().
+ */
+function login_links_permission() {
+  return array(
+    'access login links' => array(
+      'title' => t('Access login links'),
+      'description' => t("View the 'Login link' tab on user profiles."),
+      'restrict access' => TRUE,
+      'warning' => t('Provides access to login as any user account.'),
+    ),
+  );
+}
+
+/**
+ * Implements hook_menu().
+ */
+function login_links_menu() {
+  return array(
+    'user/%user/login_link' => array(
+      'title' => t('Login link'),
+      'page callback' => 'login_links_user_page',
+      'page arguments' => array(1),
+      'access arguments' => array('access login links'),
+      'type' => MENU_LOCAL_TASK,
+    ),
+  );
+}
+
+/**
+ * Page callback: Displays a login link for the current user profile.
+ *
+ * @param object $user
+ *   The user account to display the login link for.
+ *
+ * @return string
+ *   The HTML markup to display on the page.
+ *
+ * @see login_links_menu()
+ */
+function login_links_user_page($user) {
+  $output = '<div class="help"><p>' . t('This link allows you to login as %user and will expire in @interval. <strong>Do not share it publicly.</strong>', array(
+    '%user' => user_format_name($user),
+    '@interval' => format_interval(config_get('system.core', 'user_password_reset_timeout'), 1),
+  )) . '</p></div>';
+  $output .= '<code class="login-link"><pre>' . user_pass_reset_url($user) . '/login</pre></code>';
+
+  return $output;
+}

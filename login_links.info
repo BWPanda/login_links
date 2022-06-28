@@ -1,0 +1,5 @@
+type = module
+name = Login Links
+description = Displays a login link for each user on your site.
+backdrop = 1.x
+tags[] = Account Management
